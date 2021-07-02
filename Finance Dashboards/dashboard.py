@@ -10,32 +10,48 @@ st.set_page_config(page_title="The Stock Watch",
 st.sidebar.image(
     "https://compote.slate.com/images/926e5009-c10a-48fe-b90e-fa0760f82fcd.png?width=840&rect=680x453&offset=0x30")
 st.sidebar.title("The Stock Watch")
-st.sidebar.write(
-    "Hello, welcome to The Stock Watch. A resource for all kinds of stock information, such as stock overviews, fundamentals, news, and StockTwits updates.")
-stock = st.sidebar.text_input("Symbol", value='AMC', max_chars=5)
-
-symbol = IEXStock(config.IEX_API_KEY, stock)
-
 screen = st.sidebar.selectbox(
-    'View', ('Overview', 'Fundamentals', 'News', 'Stockwits'))
+    'View', ('Home', 'Overview', 'Fundamentals', 'News', 'Stocktwits'))
+stock = st.sidebar.text_input("Symbol", value='MSFT', max_chars=5)
+symbol = IEXStock(config.IEX_API_KEY, stock)
 
 st.sidebar.subheader("Contact: ")
 st.sidebar.write("jacky.chow@stonybrook.edu")
 link = '[LinkedIn](https://www.linkedin.com/in/jacchow/)'
 st.sidebar.markdown(link, unsafe_allow_html=True)
 
-st.title(screen)
-st.header(stock.upper())
+
+if screen != 'Home':
+    st.header(stock.upper())
+    st.title(screen)
+
+if screen == 'Home':
+    st.title("The Stock Watch")
+    st.header(
+        "Welcome to The Stock Watch. A resource for all kinds of stock information, such as stock overviews, fundamentals, news, and StockTwits updates.")
+    st.image("https://i.gifer.com/6ED.gif")
+    st.subheader("Stock Overviews")
+    st.write("The stock overview gives you a brief introduction about the company, which includes the live price, its exchange, description, industry, and website.")
+    st.subheader("Fundamentals")
+    st.write("The fundamentals tab provides you the basic quantitive information about the stock, which includes the market cap, highs and lows, moving averages, percent change, and earnings information.")
+    st.subheader("News")
+    st.write("The news tab allows you to see the most recent news about the particular stock. So that you can stay up to date with your investments.")
+    st.subheader("Stocktwits")
+    st.write("Stocktwits provide stock discussions from the largest social network for finance, providing you insights from different investors and traders.")
+
 
 if screen == 'Overview':
     logo = symbol.get_logo()
 
     company_info = symbol.get_company_info()
+    price = symbol.get_quote()
 
     col1, col2 = st.beta_columns(2)
 
     with col1:
         st.image(logo['url'])
+        st.header("Current Price: ")
+        st.write(price['iexRealtimePrice'])
     with col2:
         st.write(company_info['companyName'])
         st.write(company_info['exchange'])
@@ -98,7 +114,7 @@ if screen == 'News':
         st.write("")
 
 
-if screen == 'Stockwits':
+if screen == 'Stocktwits':
     r = requests.get(
         f'https://api.stocktwits.com/api/2/streams/symbol/{stock}.json')
     data = r.json()
