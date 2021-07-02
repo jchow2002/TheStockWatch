@@ -29,3 +29,13 @@ class IEXStock:
         url = f"{self.BASE_URL}/stock/{self.symbol}/news?token={self.token}"
         r = requests.get(url)
         return r.json()
+
+    def get_quote(self):
+        url = f"{self.BASE_URL}/stock/{self.symbol}/quote?token={self.token}"
+        r = requests.get(url)
+        return r.json()
+
+    def get_chart(self):
+        url = f"{self.BASE_URL}/stock/{self.symbol}/chart/1m?token={self.token}"
+        r = requests.get(url)
+        return r.json()
